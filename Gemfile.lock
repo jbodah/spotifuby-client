@@ -1,0 +1,22 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    faraday (0.9.1)
+      multipart-post (>= 1.2, < 3)
+    metaclass (0.0.4)
+    minitest (5.8.0)
+    mocha (1.1.0)
+      metaclass (~> 0.0.1)
+    multipart-post (2.0.0)
+    rake (10.4.2)
+    spy_rb (0.5.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  faraday
+  minitest
+  mocha
+  rake
+  spy_rb
