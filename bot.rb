@@ -69,15 +69,15 @@ Status - #{is_up ? 'up' : 'down'}
         MSG
       end
 
-      #on /mute/, help: 'mute - Set volume to 0' do
-        #net.post spotifuby.host('set_volume'), { volume: 0 }
-        #io << 'As you wish'
-      #end
+      on /(?<!un)mute/, help: 'mute - Set volume to 0' do
+        net.post spotifuby.url_for('set_volume'), { volume: 0 }
+        io << 'As you wish'
+      end
 
-      #on /unmute/, help: 'unmute - Set volume to max' do
-        #net.post spotifuby.host('set_volume'), { volume: 100 }
-        #io << 'As you wish'
-      #end
+      on /unmute/, help: 'unmute - Set volume to max' do
+        net.post spotifuby.url_for('set_volume'), { volume: 100 }
+        io << 'As you wish'
+      end
 
       #on /set volume (\d+)/, help: 'set volume <0-100> - Set volume' do
         #net.post spotifuby.host('set_volume'), { volume: 100 }

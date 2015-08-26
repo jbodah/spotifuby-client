@@ -11,7 +11,7 @@ require 'bot'
 class MockNet
   class << self
     def get(*args); end
-    def pots(*args); end
+    def post(*args); end
   end
 end
 
@@ -22,20 +22,20 @@ class MockIO
 end
 
 class BotTest < Minitest::Spec
+  before do
+    @net = MockNet
+    @io = MockIO
+    @spotifuby = Spotifuby::Client.new('http://localhost:4567')
+
+    @bot = Spotifuby::Bot.new(@spotifuby, @net, @io)
+  end
+
+  after do
+    Spy.restore(:all)
+  end
+
   describe 'spotifuby info' do
-    before do
-      @net = MockNet
-      @io = MockIO
-      @spotifuby = Spotifuby::Client.new('http://localhost:4567')
-
-      @bot = Spotifuby::Bot.new(@spotifuby, @net, @io)
-    end
-
-    after do
-      Spy.restore(:all)
-    end
-
-    it 'makes a request to /' do
+    it 'makes a get to /' do
       spy = Spy.on(@net, :get)
 
       @bot.receive('spotifuby info')
@@ -75,6 +75,30 @@ class BotTest < Minitest::Spec
         assert_equal 1, spy.call_count
         assert spy.call_history[0].args[0].include?('Status - up')
       end
+    end
+  end
+
+  describe 'mute' do
+    it 'makes a post to /set_volume with volume of 0' do
+      spy = Spy.on(@net, :post)
+
+      @bot.receive('mute')
+
+      assert_equal 1, spy.call_count
+      assert_equal 'http://localhost:4567/set_volume', spy.call_history[0].args[0]
+      assert_equal 0, spy.call_history[0].args[1][:volume]
+    end
+  end
+
+  describe 'unmute' do
+    it 'makes a post to /set_volume with volume of 0' do
+      spy = Spy.on(@net, :post)
+
+      @bot.receive('unmute')
+
+      assert_equal 1, spy.call_count
+      assert_equal 'http://localhost:4567/set_volume', spy.call_history[0].args[0]
+      assert_equal 100, spy.call_history[0].args[1][:volume]
     end
   end
 end
