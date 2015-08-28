@@ -58,6 +58,16 @@ Status - #{is_up ? 'up' : 'down'}
             on /play default playlist/, help: 'play default playlist - Plays the default playlist' do
               spotifuby.post_play_default_uri
             end
+
+            on /(what'?s playing|wtf is this)/, help: "whats playing (alias: wtf is this) - Display the info for the track that's currently playing" do
+              res = spotifuby.get_current_track
+              io << res.map {|k,v| "#{k.to_s.capitalize}: #{v}"}.join("\n") if res
+            end
+
+            on /who added this/, help: "who added this - Blames a user for the track that's currently playing" do
+              res = spotifuby.get_who_added_track
+              io << res[:name] if res
+            end
           end
         end
       end

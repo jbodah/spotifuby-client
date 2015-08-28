@@ -37,36 +37,27 @@ class BotTest < Minitest::Spec
   describe 'spotifuby info' do
     it 'gets to /' do
       @bot.receive 'spotifuby info'
-
       assert_requested get: ''
     end
 
     it 'outputs host url' do
       @bot.receive 'spotifuby info'
-
-      assert_equal 1, @io_spy.call_count
-      assert @io_spy.call_history[0].args[0].include?(@spotifuby.host)
+      assert_outputted @spotifuby.host
     end
 
     describe 'when host is down' do
       it 'outputs that the host is down' do
         @net.stubs(:get).raises(StandardError)
-
         @bot.receive 'spotifuby info'
-
-        assert_equal 1, @io_spy.call_count
-        assert @io_spy.call_history[0].args[0].include?('Status - down')
+        assert_outputted 'Status - down'
       end
     end
 
     describe 'when the host is up' do
       it 'outputs that the host is up' do
         @net.stubs(:get).returns(OpenStruct.new(status: 200))
-
         @bot.receive 'spotifuby info'
-
-        assert_equal 1, @io_spy.call_count
-        assert @io_spy.call_history[0].args[0].include?('Status - up')
+        assert_outputted 'Status - up'
       end
     end
   end
@@ -151,19 +142,48 @@ class BotTest < Minitest::Spec
     #end
   #end
 
-  #describe 'whats playing' do
-    #it 'does things' do
-      #fail
-    #end
-  #end
+  describe 'whats playing' do
+    ['whats playing', "what's playing", 'wtf is this'].each do |input|
+      it "gets /current_track on #{input}" do
+        @bot.receive input
+        assert_requested get: 'current_track'
+      end
+    end
 
-  #describe 'who added this' do
-    #it 'does things' do
-      #fail
-    #end
-  #end
+    it 'outputs the track details' do
+      @net.stubs(:get).returns(artist: 'Joe Buddy', track: 'Yo Dawg', album: "What's for Lunch?")
+      @bot.receive 'whats playing'
+      assert_outputted 'Artist: Joe Buddy'
+      assert_outputted 'Track: Yo Dawg'
+      assert_outputted "Album: What's for Lunch?"
+    end
+  end
+
+  describe 'who added this' do
+    it 'gets to /who_added_track on who added this' do
+      @bot.receive 'who added this'
+      assert_requested get: 'who_added_track'
+    end
+
+    it 'outputs the user from the response' do
+      @net.stubs(:get).returns(name: 'Joe Buddy')
+      @bot.receive 'who added this'
+      assert_outputted 'Joe Buddy', exact: true
+    end
+  end
 
   private
+
+  def assert_outputted(msg, options = {})
+    assert @io_spy.call_count > 0,
+      'expected a message to be outputted'
+
+    if options[:exact]
+      assert_equal msg, @io_spy.call_history[0].args[0]
+    else
+      assert @io_spy.call_history[0].args[0].include?(msg)
+    end
+  end
 
   def assert_requested(args = {})
     uri = nil
@@ -172,6 +192,9 @@ class BotTest < Minitest::Spec
       next unless uri = args.delete(sym)
       spy = @net_spies[sym]
     end
+
+    assert spy.call_count > 0,
+      "expected #{spy.spied}##{spy.original.name} to be called"
 
     expected_uri = 'http://localhost:4567'
     expected_uri = [expected_uri, uri].join('/') if uri.size > 0
