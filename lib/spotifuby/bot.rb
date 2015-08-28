@@ -12,11 +12,10 @@ module Spotifuby
 
     attr_reader :spotifuby, :net, :io
 
-    def initialize(spotifuby, net, io)
+    def initialize(spotifuby, io)
       @io = io
       @commands = []
       @spotifuby = spotifuby
-      @net = net
       if block_given?
         instance_eval &Proc.new
       end
