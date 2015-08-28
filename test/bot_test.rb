@@ -209,8 +209,8 @@ class BotTest < Minitest::Spec
   private
 
   def assert_outputted(msg, options = {})
-    assert @io_spy.call_count > 0,
-      'expected a message to be outputted'
+    assert @io_spy.call_count == 1,
+      'expected a message to be outputted once'
 
     if options[:exact]
       assert_equal msg, @io_spy.call_history[0].args[0]
@@ -227,8 +227,13 @@ class BotTest < Minitest::Spec
       spy = @net_spies[sym]
     end
 
-    assert spy.call_count > 0,
-      "expected #{spy.spied}##{spy.original.name} to be called"
+    @net_spies.values.reject {|s| s == spy}.each do |s|
+      assert s.call_count == 0,
+        "unexpected call to #{s.spied}##{s.original.name}"
+    end
+
+    assert spy.call_count == 1,
+      "expected #{spy.spied}##{spy.original.name} to be called once"
 
     expected_uri = 'http://localhost:4567'
     expected_uri = [expected_uri, uri].join('/') if uri.size > 0
