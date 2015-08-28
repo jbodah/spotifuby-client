@@ -53,6 +53,16 @@ Status - #{is_up ? 'up' : 'down'}
               on /#{action} uri (\S+)/, help: "#{action} uri <URI> - #{action.to_s.capitalize} the given Spotify URI" do |uri|
                 spotifuby.public_send("post_#{action}", uri: uri)
               end
+
+              on /#{action} me some (.*)/, help: "#{action} me some <ARTIST_NAME> - #{action.to_s.capitalize} artist based on seach query" do |artist|
+                res = spotifuby.get_search_artist(q: artist)
+                spotifuby.public_send("post_#{action}", uri: res[:uri]) if res
+              end
+
+              on /#{action} track (.*)/, help: "#{action} track <TRACK_NAME> - #{action.to_s.capitalize} track based on seach query" do |track|
+                res = spotifuby.get_search_track(q: track)
+                spotifuby.public_send("post_#{action}", uri: res[:uri]) if res
+              end
             end
 
             on /play default playlist/, help: 'play default playlist - Plays the default playlist' do

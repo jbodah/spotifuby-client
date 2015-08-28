@@ -124,23 +124,57 @@ class BotTest < Minitest::Spec
     assert_requested post: 'play_default_uri'
   end
 
-  #describe 'play me some' do
-    #it 'does things' do
-      #fail
-    #end
-  #end
+  describe 'play me some' do
+    it 'gets to /search_artist with joe buddy on play me some joe buddy' do
+      @bot.receive 'play me some joe buddy'
+      assert_requested get: 'search_artist', q: 'joe buddy'
+    end
 
-  #describe 'enqueue me some' do
-    #it 'does things' do
-      #fail
-    #end
-  #end
+    it 'gets to /search_artist then posts the uri to /play' do
+      @net.stubs(:get).returns(uri: 12345)
+      @bot.receive 'play me some joe buddy'
+      assert_requested post: 'play', uri: 12345
+    end
+  end
 
-  #describe 'enqueue track' do
-    #it 'does things' do
-      #fail
-    #end
-  #end
+  describe 'enqueue me some' do
+    it 'gets to /search_artist with joe buddy on enqueue me some joe buddy' do
+      @bot.receive 'enqueue me some joe buddy'
+      assert_requested get: 'search_artist', q: 'joe buddy'
+    end
+
+    it 'gets to /search_artist then posts the uri to /enqueue' do
+      @net.stubs(:get).returns(uri: 12345)
+      @bot.receive 'enqueue me some joe buddy'
+      assert_requested post: 'enqueue', uri: 12345
+    end
+  end
+
+  describe 'enqueue track' do
+    it 'gets to /search_track with joe buddy on enqueue track yo dawg' do
+      @bot.receive 'enqueue track yo dawg'
+      assert_requested get: 'search_track', q: 'yo dawg'
+    end
+
+    it 'gets to /search_track then posts the uri to /enqueue' do
+      @net.stubs(:get).returns(uri: 12345)
+      @bot.receive 'enqueue track yo dawg'
+      assert_requested post: 'enqueue', uri: 12345
+    end
+  end
+
+  describe 'play track' do
+    it 'gets to /search_track with joe buddy on play track yo dawg' do
+      @bot.receive 'play track yo dawg'
+      assert_requested get: 'search_track', q: 'yo dawg'
+    end
+
+    it 'gets to /search_track then posts the uri to /play' do
+      @net.stubs(:get).returns(uri: 12345)
+      @bot.receive 'play track yo dawg'
+      assert_requested post: 'play', uri: 12345
+    end
+  end
 
   describe 'whats playing' do
     ['whats playing', "what's playing", 'wtf is this'].each do |input|
