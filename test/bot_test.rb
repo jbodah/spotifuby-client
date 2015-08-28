@@ -5,8 +5,9 @@ require 'spy'
 require 'mocha/mini_test'
 require 'ostruct'
 
-$LOAD_PATH << '.'
-require 'bot'
+$LOAD_PATH.push 'lib', __FILE__
+require 'spotifuby/client'
+require 'spotifuby/bot'
 
 class MockNet
   class << self
@@ -27,7 +28,7 @@ class BotTest < Minitest::Spec
     @io = MockIO
     @spotifuby = Spotifuby::Client.new('http://localhost:4567', @net)
 
-    @bot = Spotifuby::Bot.new(@spotifuby, @net, @io)
+    @bot = Spotifuby::Bot.create(@spotifuby, @net, @io)
 
     @net_spies = [:get, :post].each_with_object({}) do |meth, memo|
       memo[meth] = Spy.on(@net, meth)

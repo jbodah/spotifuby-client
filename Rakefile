@@ -1,5 +1,10 @@
-task :test do
-  system 'ruby -Ilib bot_test.rb'
+require 'rake/testtask'
+
+Rake::TestTask.new do |t|
+  t.libs << 'test'
+  t.test_files = FileList['test/**/*test.rb']
+  t.verbose = true
 end
+
 
 task default: :test
