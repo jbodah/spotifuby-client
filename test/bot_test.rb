@@ -26,6 +26,8 @@ class BotTest < Minitest::Spec
     @net_spies = [:get, :post].each_with_object({}) do |meth, memo|
       memo[meth] = Spy.on(@net, meth)
     end
+
+    @io_spy = Spy.on(@io, :<<)
   end
 
   after do
@@ -33,10 +35,6 @@ class BotTest < Minitest::Spec
   end
 
   describe 'spotifuby info' do
-    before do
-      @io_spy = Spy.on(@io, :<<)
-    end
-
     it 'gets to /' do
       @bot.receive 'spotifuby info'
 
