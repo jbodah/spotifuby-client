@@ -1,10 +1,20 @@
+require 'faraday'
+require 'json'
+require 'spotifuby/client/faraday_middleware'
+
 module Spotifuby
   class Client
     attr_reader :host
 
-    def initialize(host, net)
+    # @param [String] host the Spotifuby server
+    # @param [Object] net the underlying HTTP client; primarily
+    #   for injection during testing. Defaults to Faraday
+    def initialize(host, net = nil)
       @host = host
-      @net = net
+      @net = net || Faraday.new do |conn|
+        conn.use FaradayMiddleware
+        conn.adapter Faraday.default_adapter
+      end
     end
 
     def url_for(part)
@@ -27,20 +37,3 @@ module Spotifuby
   end
 end
 
-#require 'faraday'
-
-
-## TODO is this needed?
-#class FaradayNetAdapter
-  #def initialize
-    #@client = Faraday.new
-  #end
-
-  #def get(url)
-    #@client.get(url)
-  #end
-
-  #def post(url, params)
-    #@client.post(url, params)
-  #end
-#end
