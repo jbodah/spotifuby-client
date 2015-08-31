@@ -4,7 +4,7 @@ require 'spotifuby/bot/command'
 module Spotifuby
   class Bot
     class << self
-      def create(*args)
+      def create_default(*args)
         bot = new(*args)
         Bot::Builder.new(bot).build
       end

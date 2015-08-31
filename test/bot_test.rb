@@ -21,7 +21,7 @@ class BotTest < Minitest::Spec
     @io = MockIO
     @spotifuby = Spotifuby::Client.new('http://localhost:4567', @net)
 
-    @bot = Spotifuby::Bot.create(@spotifuby, @io)
+    @bot = Spotifuby::Bot.create_default(@spotifuby, @io)
 
     @net_spies = [:get, :post].each_with_object({}) do |meth, memo|
       memo[meth] = Spy.on(@net, meth)
