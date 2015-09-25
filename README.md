@@ -1,3 +1,5 @@
+## spotifuby-client has been merged into the [spotifuby](https://github.com/jbodah/spotifuby) repo
+
 # spotifuby-client
 a client library for talking with a [spotifuby](https://github.com/jbodah/spotifuby) server
 
