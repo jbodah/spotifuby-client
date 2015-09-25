@@ -56,12 +56,22 @@ Status - #{is_up ? 'up' : 'down'}
 
               on /#{action} me some (.*)/, help: "#{action} me some <ARTIST_NAME> - #{action.to_s.capitalize} artist based on seach query" do |artist|
                 res = spotifuby.get_search_artist(q: artist)
-                spotifuby.public_send("post_#{action}", uri: res[:uri]) if res
+                results = JSON.parse(res.body)
+                if results.any?
+                  spotifuby.public_send("post_#{action}", uri: results.first['uri'])
+                else
+                  raise 'TODO'
+                end
               end
 
               on /#{action} track (.*)/, help: "#{action} track <TRACK_NAME> - #{action.to_s.capitalize} track based on seach query" do |track|
                 res = spotifuby.get_search_track(q: track)
-                spotifuby.public_send("post_#{action}", uri: res[:uri]) if res
+                results = JSON.parse(res.body)
+                if results.any?
+                  spotifuby.public_send("post_#{action}", uri: results.first['uri'])
+                else
+                  raise 'TODO'
+                end
               end
             end
 
@@ -71,7 +81,8 @@ Status - #{is_up ? 'up' : 'down'}
 
             on /(what'?s playing|wtf is this)/, help: "whats playing (alias: wtf is this) - Display the info for the track that's currently playing" do
               res = spotifuby.get_current_track
-              io << res.map {|k,v| "#{k.to_s.capitalize}: #{v}"}.join("\n") if res
+              info = JSON.parse(res.body)
+              io << info.map {|k,v| "#{k.to_s.capitalize}: #{v}"}.join("\n")
             end
 
             on /who added this/, help: "who added this - Blames a user for the track that's currently playing" do
