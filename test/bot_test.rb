@@ -72,6 +72,22 @@ class BotTest < Minitest::Spec
     assert_requested post: 'set_volume', volume: 100
   end
 
+  describe 'shuffle' do
+    ['stop shuffling', 'stop shuffle', 'disable shuffle', 'disable shuffling'].each do |txt|
+      it "posts to /set_shuffle with shuffle false on #{txt}" do
+        @bot.receive txt
+        assert_requested post: 'set_shuffle', shuffle: false
+      end
+    end
+
+    ['start shuffling', 'start shuffle', 'enable shuffle', 'enable shuffling'].each do |txt|
+      it "posts to /set_shuffle with shuffle true on #{txt}" do
+        @bot.receive txt
+        assert_requested post: 'set_shuffle', shuffle: true
+      end
+    end
+  end
+
   describe 'set volume' do
     it 'posts to /set_volume with volume of 30 on set volume 30' do
       @bot.receive 'set volume 30'

@@ -78,6 +78,14 @@ Status - #{is_up ? 'up' : 'down'}
               res = spotifuby.get_who_added_track
               io << res[:name] if res
             end
+
+            on /(start|enable) shuffl(e|ing)/, help: 'enable shuffle (alias: start shuffle) - Enable shuffling' do
+              spotifuby.post_set_shuffle shuffle: true
+            end
+
+            on /(stop|disable) shuffl(e|ing)/, help: 'disable shuffle (alias: stop shuffle) - Disable shuffling' do
+              spotifuby.post_set_shuffle shuffle: false
+            end
           end
         end
       end
